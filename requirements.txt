@@ -1,0 +1,9 @@
+pdfplumber
+pytesseract
+flask_cors
+google.generativeai
+dotenv
+PIL
+Flask
+request
+jsonify
