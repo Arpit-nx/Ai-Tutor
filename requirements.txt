@@ -1,9 +1,8 @@
-pdfplumber
-pytesseract
-flask_cors
-google.generativeai
-dotenv
-PIL
-Flask
-request
-jsonify
+pdfplumber==0.9.0
+pytesseract==0.3.10
+flask_cors==4.0.0
+google-generativeai==0.3.2
+python-dotenv==1.0.0
+Pillow==9.5.0
+Flask==2.2.5
+requests==2.31.0
