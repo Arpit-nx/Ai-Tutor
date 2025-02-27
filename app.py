@@ -158,57 +158,58 @@ def extract_text(file_path, file_ext):
     """Extracts text from PDFs, Images (OCR for Handwritten & Printed), or DOCX files"""
     text = ""
 
-    if file_ext == "pdf":
-        with pdfplumber.open(file_path) as pdf:
-            text = "\n".join([page.extract_text() or "" for page in pdf.pages])
+    try:
+        if file_ext == "pdf":
+            with pdfplumber.open(file_path) as pdf:
+                text = "\n".join([page.extract_text() or "" for page in pdf.pages])
 
-    elif file_ext in ["png", "jpg", "jpeg"]:
-        img = preprocess_image(file_path)  # Preprocess image
-        text = pytesseract.image_to_string(img, config="--psm 6")  # Use Page Segmentation Mode 6
+        elif file_ext in ["png", "jpg", "jpeg"]:
+            img = preprocess_image(file_path)  # Preprocess image
+            text = pytesseract.image_to_string(img, config="--psm 6")  # Use Page Segmentation Mode 6
 
-    # Remove excessive spaces, newlines, and special characters
-    text = " ".join(text.split())
-    return text.strip()
+        # Remove excessive spaces, newlines, and special characters
+        text = " ".join(text.split())
+        return text.strip()
+
+    except Exception as e:
+        return f"Error processing file: {str(e)}"
 
 def generate_report(text):
     """Generates a structured, formatted student report card using Gemini AI."""
     if not GEMINI_API_KEY:
-        return "Gemini API key is missing."
+        return ["Gemini API key is missing."]
 
     model = genai.GenerativeModel("gemini-1.5-pro")  # Upgraded to 'pro' for better accuracy
 
     prompt = f"""
-    Analyze the following handwritten or printed text and generate a **well-structured** student report card. 
-    Ensure that each section is formatted separately with clear headings and line breaks.
+    Analyze the following handwritten or printed text and generate a well-structured student report card. 
 
     **Extracted Text:** 
     {text}
 
     **Report Card Format:** 
-    📝 **Student Report Card - Analysis**  
+    1️⃣ **Subject:** (Detect the subject)  
+    2️⃣ **Assignment/Test Type:** (Determine if it's an assignment or test component)  
+    3️⃣ **Key Concept:** (Summarize the main topic concisely)  
+    4️⃣ **Accuracy:** (Evaluate correctness with explanations)  
+    5️⃣ **Strengths:** (Mention positive aspects of the content)  
+    6️⃣ **Areas for Improvement:** (Highlight key issues/errors)  
+    7️⃣ **Suggestions:** (Provide concise recommendations)  
+    8️⃣ **Overall Assessment:** (Final remark on clarity and quality)  
 
-    **📚 Subject:** (Auto-detect the subject)  
-    **📄 Assignment/Test Type:** (Determine whether it's an assignment or test component)  
-
-    🔹 **Analysis Summary**  
-    **1️⃣ Key Concept:** (Summarize the main topic concisely)  
-    **2️⃣ Accuracy:** (Evaluate correctness with explanations)  
-    **3️⃣ Strengths:** (Mention positive aspects of the content)  
-    **4️⃣ Areas for Improvement:** (Highlight key issues/errors)  
-    **5️⃣ Suggestions:** (Provide concise recommendations)  
-
-    🏆 **Overall Assessment:** (Brief final remark on the clarity and quality)  
-
-    **Ensure the response is properly formatted with bullet points and line breaks.**
+    Ensure the response is properly structured as a list.
     """
 
-    response = model.generate_content(prompt)
+    try:
+        response = model.generate_content(prompt)
 
-    if response.text:
-        formatted_report = response.text.strip().replace("**", "**\n")  # Ensure line breaks for sections
-        return formatted_report
-    else:
-        return "No response from Gemini."
+        if response.text:
+            return response.text.strip().split("\n")  # Convert AI response to list format
+
+        return ["No response from Gemini AI."]
+
+    except Exception as e:
+        return [f"Error generating report: {str(e)}"]
 
 @app.route("/", methods=["GET"])
 def home():
@@ -237,7 +238,7 @@ def upload_file():
 
     report = generate_report(text)
 
-    return jsonify({"filename": filename, "report": report})
+    return jsonify({"filename": filename, "report": report})  # Return report as a list
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -24,13 +24,14 @@
 // export default ReportPage;
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./ReportPage.css"; 
+import "./ReportPage.css";
+
 const ReportPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
     
-    // ✅ Extract report data (if available)
-    const report = location.state?.report || "No report available.";
+    // ✅ Extract report data (structured as an array)
+    const report = location.state?.report || [];
 
     return (
         <div className="report-container">
@@ -38,7 +39,17 @@ const ReportPage = () => {
 
             {/* Report Card */}
             <div className="report-card">
-                <p className="report-text">{report}</p>
+                {report.length > 0 ? (
+                    <ul className="report-list">
+                        {report.map((point, index) => (
+                            <li key={index} className="report-item">
+                                <strong>{index + 1}. </strong> {point}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="report-text">No report available.</p>
+                )}
             </div>
 
             {/* Back Button */}
@@ -49,4 +60,4 @@ const ReportPage = () => {
     );
 };
 
-export default ReportPage;
+export default ReportPage;

@@ -1,42 +1,200 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Main Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f5f7fa, #c3cfe2); /* Subtle gradient */
+  align-items: center;
+}
+
+/* Navbar Styling */
+.navbar {
+  width: 100%;
+  background: #6c63ff; /* Vibrant blue shade */
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-size: 1rem;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-links a:hover {
+  color: #ffdd57;
+}
+
+/* Profile Section */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Main Content */
+.main-content {
+  width: 90%;
+  max-width: 1200px;
+  margin-top: 20px;
+}
+
+/* Upload Section */
+.upload-container {
+  background: white;
   padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
+  width: 100%;
+  max-width: 500px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.upload-container h2 {
+  font-size: 1.5rem;
+  color: #444;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.file-input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 2px dashed #6c63ff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.upload-button {
+  width: 100%;
+  background: #6c63ff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.upload-button:hover {
+  background: #5848e5;
+}
+
+/* Collected Files & Reports */
+.collected-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.collected-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 48%;
+}
+
+.collected-section h3 {
+  font-size: 1.3rem;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+/* Report Card Section */
+.report-container {
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.report-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #6c63ff;
+  margin-bottom: 15px;
+}
+
+.report-content {
+  font-size: 1rem;
+  color: #333;
+}
+
+.report-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 1rem;
+  background: #f5f7fa;
+  border-radius: 8px;
+}
+
+/* Buttons */
+.button {
+  background: #6c63ff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.button:hover {
+  background: #5848e5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .collected-container {
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
+
+  .collected-section {
+    width: 100%;
   }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .navbar {
+    flex-direction: column;
+    align-items: center;
   }
-}
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  .nav-links {
+    margin-top: 10px;
+  }
 }
