@@ -52,24 +52,31 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./FileUpload.css";
 
 const FileUpload = () => {
     const [file, setFile] = useState(null);
+    const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
-    const navigate = useNavigate(); // 🔄 Used for navigation
+    const navigate = useNavigate();
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
 
+    const handleSubjectChange = (e) => {
+        setSubject(e.target.value);
+    };
+
     const handleUpload = async () => {
-        if (!file) {
-            setMessage("❌ Please select a file.");
+        if (!file || !subject.trim()) {
+            setMessage("❌ Please select a file and enter a subject.");
             return;
         }
 
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("subject", subject);
 
         try {
             const response = await axios.post("http://127.0.0.1:5000/upload", formData, {
@@ -88,27 +95,33 @@ const FileUpload = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-            <div className="bg-white shadow-lg rounded-xl p-6 max-w-md w-full text-center">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Upload a File</h2>
-                
+        <div className="upload-container">
+            <div className="upload-box">
+                <h2 className="upload-title">Upload a File</h2>
+
                 <input 
                     type="file" 
                     onChange={handleFileChange} 
-                    className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4
-                        file:rounded-lg file:border-0 file:text-sm file:font-semibold
-                        file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-4"
+                    className="file-input"
+                />
+
+                <input 
+                    type="text"
+                    placeholder="Enter subject"
+                    value={subject}
+                    onChange={handleSubjectChange}
+                    className="subject-input"
                 />
 
                 <button 
                     onClick={handleUpload} 
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
+                    className="upload-button"
                 >
                     Upload
                 </button>
 
                 {message && (
-                    <p className="mt-4 text-gray-600 bg-gray-200 px-4 py-2 rounded-md">
+                    <p className="upload-message">
                         {message}
                     </p>
                 )}
@@ -117,4 +130,4 @@ const FileUpload = () => {
     );
 };
 
-export default FileUpload;
+export default FileUpload;

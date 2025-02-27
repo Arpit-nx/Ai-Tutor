@@ -10,9 +10,9 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Navbar />} />
+                <Route path="/" element={<Navbar/>} />
                 <Route path="/report" element={<ReportPage />} />
-                <Route path="/upload" element={<FileUpload />} />
+                <Route path="/FileUpload" element={<FileUpload />} />
             </Routes>
         </Router>
     );

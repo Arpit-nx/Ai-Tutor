@@ -174,7 +174,7 @@ def extract_text(file_path, file_ext):
     except Exception as e:
         return f"Error processing file: {str(e)}"
 
-def generate_report(text):
+def generate_report(subject, text):
     """Generates a structured, formatted student report card using Gemini AI."""
     if not GEMINI_API_KEY:
         return ["Gemini API key is missing."]
@@ -182,13 +182,13 @@ def generate_report(text):
     model = genai.GenerativeModel("gemini-1.5-pro")  # Upgraded to 'pro' for better accuracy
 
     prompt = f"""
-    Analyze the following handwritten or printed text and generate a well-structured student report card. 
+    Analyze the following handwritten or printed text for the subject **{subject}** and generate a well-structured student report card.
 
-    **Extracted Text:** 
+    **Extracted Text:**
     {text}
 
-    **Report Card Format:** 
-    1️⃣ **Subject:** (Detect the subject)  
+    **Report Card Format:**
+    1️⃣ **Subject:** {subject}  
     2️⃣ **Assignment/Test Type:** (Determine if it's an assignment or test component)  
     3️⃣ **Key Concept:** (Summarize the main topic concisely)  
     4️⃣ **Accuracy:** (Evaluate correctness with explanations)  
@@ -219,12 +219,14 @@ def home():
 @app.route("/upload", methods=["POST"])
 def upload_file():
     """Handles file upload and processing"""
-    if "file" not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
+    if "file" not in request.files or "subject" not in request.form:
+        return jsonify({"error": "File and subject are required."}), 400
 
     file = request.files["file"]
-    if file.filename == "" or not allowed_file(file.filename):
-        return jsonify({"error": "Invalid file format"}), 400
+    subject = request.form["subject"].strip()
+
+    if file.filename == "" or not allowed_file(file.filename) or not subject:
+        return jsonify({"error": "Invalid file format or subject missing."}), 400
 
     filename = secure_filename(file.filename)
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
@@ -236,9 +238,9 @@ def upload_file():
     if not text:
         return jsonify({"error": "Could not extract text from file"}), 400
 
-    report = generate_report(text)
+    report = generate_report(subject, text)
 
-    return jsonify({"filename": filename, "report": report})  # Return report as a list
+    return jsonify({"filename": filename, "subject": subject, "report": report})  # Return report as a list
 
 if __name__ == "__main__":
     app.run(debug=True)
