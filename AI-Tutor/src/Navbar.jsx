@@ -1,20 +1,16 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for routing
 import { FaUserCircle } from "react-icons/fa"; // Ensure react-icons is installed
 import "./Navbar.css";
 
 const studentData = {
   name: "Arpit Singh",
   id: "12345",
-  subjects: [
-    { name: "Math", marks: 90 },
-    { name: "Science", marks: 85 },
-    { name: "English", marks: 88 },
-  ],
 };
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [images, setImages] = useState({ Math: null, Science: null, English: null });
+  const navigate = useNavigate(); // Hook to navigate between pages
 
   // ✅ Close dropdown when clicking outside
   useEffect(() => {
@@ -26,13 +22,6 @@ export default function Navbar() {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
-
-  const handleImageUpload = (event, subject) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImages((prevImages) => ({ ...prevImages, [subject]: URL.createObjectURL(file) }));
-    }
-  };
 
   return (
     <>
@@ -50,9 +39,14 @@ export default function Navbar() {
                 <div className="dropdown-header">{studentData.name}</div>
                 <div className="dropdown-item">Student ID: {studentData.id}</div>
                 <hr />
-                {studentData.subjects.map((subject, index) => (
-                  <div key={index} className="dropdown-item">{subject.name}: {subject.marks}</div>
-                ))}
+                {/* ✅ Upload Button - Navigates to /fileUpload */}
+                <button className="upload-button" onClick={() => navigate("/fileUpload")}>
+                  Upload
+                </button>
+                {/* ✅ Report Button - Navigates to /showReport */}
+                <button className="upload-button" style={{ marginTop: "10px" }} onClick={() => navigate("/showReport")}>
+                  Report
+                </button>
               </div>
             )}
           </div>
@@ -62,18 +56,17 @@ export default function Navbar() {
 
       {/* ✅ Main Content */}
       <div className="content">
-        <h2 className="welcome-text">Welcome to the Student Portal</h2>
-        <div className="subject-sections">
-          {studentData.subjects.map((subject, index) => (
-            <div key={index} className="subject-card">
-              <h3>{subject.name}</h3>
-              <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, subject.name)} />
-              {images[subject.name] && (
-                <img src={images[subject.name]} alt={`${subject.name} upload`} className="uploaded-image" />
-              )}
-            </div>
-          ))}
-        </div>
+        <h2 className="welcome-text">
+          🚀 **Welcome to Your AI-Powered Learning Assistant!**  
+          Say goodbye to hours of manual grading, lesson planning, and content creation.  
+          **Our intelligent platform transforms education,** making learning **smarter, faster, and more personalized.**  
+          <br /><br />
+          ✅ **Instant Report Generation** – Upload your handwritten or printed assignments and get detailed insights instantly!  
+          ✅ **AI-Powered Feedback** – Improve learning with accurate feedback, strengths, and improvement areas.  
+          ✅ **Smart Content Creation** – Generate quizzes, custom worksheets, and personalized study materials effortlessly.  
+          <br />
+          🔥 **Empower your learning journey with AI. Let's make education smarter together!**  
+        </h2>
       </div>
     </>
   );

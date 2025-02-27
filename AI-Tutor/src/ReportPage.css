@@ -1,15 +1,22 @@
-/* Global Styles */
+/* General Styles */
 body {
-    background: linear-gradient(to bottom, #6e6b6c, #0f0f0f);
-    margin: 0;
-    display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Ensures full height coverage */
+    display: flex;
+    background-image: url('./Report_back.jpg'); 
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: black;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
 }
 
 /* Report Container */
 .report-container {
+    background-color: #1a54b8;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,7 +25,6 @@ body {
     max-width: 600px;
     height: auto;
     padding: 20px;
-    background: linear-gradient(to bottom, #d10f29, #feb47b); /* Fixed gradient */
     box-shadow: 0 8px 16px rgba(229, 5, 61, 0.2);
     border-radius: 2rem;
     text-align: center;
@@ -28,15 +34,15 @@ body {
 .title {
     font-size: 26px;
     font-weight: bold;
-    color: #fff;
+    color: #070505;
     margin-bottom: 15px;
 }
 
 /* Report Card */
 .report-card {
     font-size: 16px;
-    background-color: #C8a2c8;
-    color: black;
+    background-color: aqua;
+    color: rgb(12, 11, 11);
     text-align: left;
     border-radius: 1.5rem;
     padding: 15px;  /* Added padding */
@@ -46,16 +52,17 @@ body {
 }
 
 /* Report List */
-.report-list {
+/* .report-list {
+    background-color: rgb(191, 236, 236);
     list-style-type: none;
     padding: 0;
     margin: 0;
-}
+}*/
 
 .report-item {
     padding: 8px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
+} 
 
 /* Back Button */
 .back-button {
@@ -63,7 +70,7 @@ body {
     padding: 12px 24px;
     font-size: 16px;
     color: white;
-    background: linear-gradient(to bottom, #d10f29, #feb47b);
+    background: linear-gradient(to bottom, #096ccf, #bdbab7);
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -86,6 +93,8 @@ body {
     }
 
     .report-card {
-        font-size: 14px;
+        font-size: 14px;
     }
 }
+
+

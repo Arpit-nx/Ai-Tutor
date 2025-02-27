@@ -84,8 +84,6 @@ const FileUpload = () => {
             });
 
             setMessage("✅ File uploaded successfully!");
-
-            // ✅ Navigate to ReportPage & pass the report data
             navigate("/report", { state: { report: response.data.report } });
 
         } catch (error) {
@@ -99,6 +97,7 @@ const FileUpload = () => {
             <div className="upload-box">
                 <h2 className="upload-title">Upload a File</h2>
 
+                <label className="file-label">Choose a file</label>
                 <input 
                     type="file" 
                     onChange={handleFileChange} 
@@ -121,7 +120,7 @@ const FileUpload = () => {
                 </button>
 
                 {message && (
-                    <p className="upload-message">
+                    <p className={`upload-message ${message.includes("❌") ? "error" : "success"}`}>
                         {message}
                     </p>
                 )}

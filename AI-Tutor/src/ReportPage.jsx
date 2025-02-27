@@ -35,7 +35,7 @@ const ReportPage = () => {
 
     return (
         <div className="report-container">
-            <h2 className="title">Generated Report</h2>
+            <h2 className="title">Report</h2>
 
             {/* Report Card */}
             <div className="report-card">
@@ -53,11 +53,11 @@ const ReportPage = () => {
             </div>
 
             {/* Back Button */}
-            <button className="back-button" onClick={() => navigate("/")}>
+            <button className="back-button" onClick={() => navigate("/FileUpload")}>
                 Back to Upload
             </button>
         </div>
     );
 };
 
-export default ReportPage;
+export default ReportPage;

@@ -143,6 +143,9 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 # Set Tesseract path (Windows only, update path as needed)
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
+# Store reports in memory (Replace with a database for persistence)
+reports = []
+
 def allowed_file(filename):
     """Check if file is allowed based on extension."""
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -182,20 +185,20 @@ def generate_report(subject, text):
     model = genai.GenerativeModel("gemini-1.5-pro")  # Upgraded to 'pro' for better accuracy
 
     prompt = f"""
-    Analyze the following handwritten or printed text for the subject **{subject}** and generate a well-structured student report card.
+    Analyze the following handwritten or printed text for the subject {subject} and generate a well-structured student report card.
 
-    **Extracted Text:**
+    Extracted Text:
     {text}
 
-    **Report Card Format:**
-    1️⃣ **Subject:** {subject}  
-    2️⃣ **Assignment/Test Type:** (Determine if it's an assignment or test component)  
-    3️⃣ **Key Concept:** (Summarize the main topic concisely)  
-    4️⃣ **Accuracy:** (Evaluate correctness with explanations)  
-    5️⃣ **Strengths:** (Mention positive aspects of the content)  
-    6️⃣ **Areas for Improvement:** (Highlight key issues/errors)  
-    7️⃣ **Suggestions:** (Provide concise recommendations)  
-    8️⃣ **Overall Assessment:** (Final remark on clarity and quality)  
+    Report Card Format:
+    1️⃣ Subject: {subject}  
+    2️⃣ Assignment/Test Type: (Determine if it's an assignment or test component)  
+    3️⃣ Key Concept: (Summarize the main topic concisely)  
+    4️⃣ Accuracy: (Evaluate correctness with explanations)  
+    5️⃣ Strengths: (Mention positive aspects of the content)  
+    6️⃣ Areas for Improvement: (Highlight key issues/errors)  
+    7️⃣ Suggestions: (Provide concise recommendations)  
+    8️⃣ Overall Assessment: (Final remark on clarity and quality)  
 
     Ensure the response is properly structured as a list.
     """
@@ -238,9 +241,23 @@ def upload_file():
     if not text:
         return jsonify({"error": "Could not extract text from file"}), 400
 
-    report = generate_report(subject, text)
+    report_content = generate_report(subject, text)
 
-    return jsonify({"filename": filename, "subject": subject, "report": report})  # Return report as a list
+    # Store report data in memory (Replace with a database later)
+    report = {
+        "filename": filename,
+        "subject": subject,
+        "report": report_content
+    }
+    reports.append(report)
+
+    return jsonify({"filename": filename, "subject": subject, "report": report_content})
+
+@app.route("/reports", methods=["GET"])
+def get_reports():
+    """Fetch all stored reports in sequential order"""
+    return jsonify({"reports": reports})
 
 if __name__ == "__main__":
     app.run(debug=True)
+

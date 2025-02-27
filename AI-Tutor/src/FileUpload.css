@@ -1,31 +1,42 @@
-/* FileUpload.css */
+/* File Upload Page Styling */
 .upload-container {
     display: flex;
-    flex-direction: column;
+    /* justify-content: center; */
     align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: #f3f4f6;
-    padding: 20px;
+    height: 100vh;
+    /* background-color: #6a94d9; */
+    background: rgba(0, 0, 0, 0.5); /*Dark overlay*/
+    /* padding: 20px; */
 }
 
+/* Upload Box */
 .upload-box {
-    background-color: white;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    background: rgba(202, 183, 183, 0.9);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 12px;
-    padding: 24px;
-    max-width: 400px;
+    padding: 30px;
     width: 100%;
+    max-width: 400px;
     text-align: center;
 }
 
+/* Title */
 .upload-title {
     font-size: 24px;
-    font-weight: 600;
-    color: #374151;
+    font-weight: 700;
+    color: #1e3a8a;
     margin-bottom: 16px;
 }
 
+/* File Label */
+.file-label {
+    display: block;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+/* File Input */
 .file-input {
     width: 100%;
     padding: 10px;
@@ -34,30 +45,35 @@
     font-size: 14px;
     color: #374151;
     cursor: pointer;
-    margin-bottom: 10px;
+    background: #ffffff;
+    transition: 0.3s;
+    margin-bottom: 12px;
 }
 
 .file-input:hover {
     background-color: #f0f9ff;
 }
 
+/* Subject Input */
 .subject-input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
     font-size: 14px;
     color: #374151;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    background: #ffffff;
 }
 
+/* Upload Button */
 .upload-button {
     width: 100%;
     background-color: #2563eb;
     color: white;
     font-size: 16px;
     font-weight: bold;
-    padding: 10px;
+    padding: 12px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -68,11 +84,22 @@
     background-color: #1e40af;
 }
 
+/* Upload Message */
 .upload-message {
     margin-top: 12px;
-    background-color: #e5e7eb;
     padding: 10px;
     border-radius: 8px;
     font-size: 14px;
-    color: #374151;
+    font-weight: bold;
+    text-align: center;
+}
+
+.upload-message.success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.upload-message.error {
+    background-color: #fee2e2;
+    color: #b91c1c;
 }
