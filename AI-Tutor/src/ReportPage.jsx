@@ -5,7 +5,7 @@ import "./ReportPage.css";
 const ReportPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [report, setReport] = useState([]);  // ✅ Start with an empty array
+    const [report, setReport] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -20,19 +20,14 @@ const ReportPage = () => {
         }
 
         fetch(`http://127.0.0.1:5000/reports/${reportId}`)
-            .then((res) => {
-                console.log("📡 Fetching report...");
-                return res.json();
-            })
+            .then((res) => res.json())
             .then((data) => {
                 console.log("✅ Fetched Report Data:", data);
 
                 if (data.report && Array.isArray(data.report.report)) { 
-                    // ✅ Filter out empty strings
-                    const filteredReport = data.report.report.filter(point => point.trim() !== "");
-                    setReport(filteredReport);
+                    setReport(data.report.report.filter(point => point.trim() !== ""));
                 } else {
-                    setError("Report not found or has incorrect format.");
+                    setError("Invalid report format.");
                 }
                 setLoading(false);
             })
@@ -42,6 +37,17 @@ const ReportPage = () => {
                 setLoading(false);
             });
     }, [location.state]);    
+
+    // ✅ Define Download PDF function
+    const handleDownloadPDF = () => {
+        const reportId = location.state?.reportId;
+        if (!reportId) {
+            alert("No report ID found.");
+            return;
+        }
+
+        window.open(`http://127.0.0.1:5000/download/${reportId}`, "_blank");
+    };
 
     return (
         <div className="report-container">
