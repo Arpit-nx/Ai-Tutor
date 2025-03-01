@@ -1,113 +1,134 @@
 import os
 import pdfplumber
 import pytesseract
+import gridfs
 from flask_cors import CORS
 import google.generativeai as genai
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from werkzeug.utils import secure_filename
+from pymongo import MongoClient
 from PIL import Image, ImageEnhance, ImageFilter
 from dotenv import load_dotenv
+from fpdf import FPDF
+import datetime
+from io import BytesIO
+from bson import ObjectId
 
 # Load environment variables
 load_dotenv()
+
+# MongoDB Atlas connection
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client["ai_tutor_db"]
+reports_collection = db["reports"]
+fs = gridfs.GridFS(db)  # GridFS instance for PDFs
 
 # Configure Gemini API
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 
-# Configure Flask
+# Flask App Configuration
 app = Flask(__name__)
-CORS(app)  # Enable CORS for React frontend
+CORS(app)  # Consider restricting to specific origins
 
 app.config["UPLOAD_FOLDER"] = "uploads"
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "docx"}
-
-# Ensure the upload folder exists
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-# Set Tesseract path (Windows only, update path as needed)
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-
-# Store reports in memory (Replace with a database for persistence)
-reports = []
+# Set Tesseract path (Update as needed)
+pytesseract.pytesseract.tesseract_cmd = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
 
 def allowed_file(filename):
-    """Check if file is allowed based on extension."""
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def preprocess_image(image_path):
-    """Enhance image quality for better OCR accuracy."""
-    img = Image.open(image_path).convert("L")  # Convert to grayscale
-    img = img.filter(ImageFilter.SHARPEN)  # Sharpen the image
-    img = ImageEnhance.Contrast(img).enhance(2)  # Increase contrast
+    img = Image.open(image_path).convert("L")
+    img = img.filter(ImageFilter.SHARPEN)
+    img = ImageEnhance.Contrast(img).enhance(2)
     return img
 
 def extract_text(file_path, file_ext):
-    """Extracts text from PDFs, Images (OCR for Handwritten & Printed), or DOCX files"""
     text = ""
-
     try:
         if file_ext == "pdf":
             with pdfplumber.open(file_path) as pdf:
                 text = "\n".join([page.extract_text() or "" for page in pdf.pages])
-
         elif file_ext in ["png", "jpg", "jpeg"]:
-            img = preprocess_image(file_path)  # Preprocess image
-            text = pytesseract.image_to_string(img, config="--psm 6")  # Use Page Segmentation Mode 6
-
-        # Remove excessive spaces, newlines, and special characters
-        text = " ".join(text.split())
-        return text.strip()
-
+            img = preprocess_image(file_path)
+            text = pytesseract.image_to_string(img, config="--psm 6")
+        text = " ".join(text.split()).strip()
+        return text if text else None
     except Exception as e:
-        return f"Error processing file: {str(e)}"
+        return None  # Return None so we can handle errors in API response
 
 def generate_report(subject, text):
-    """Generates a structured, formatted student report card using Gemini AI."""
     if not GEMINI_API_KEY:
-        return ["Gemini API key is missing."]
-
-    model = genai.GenerativeModel("gemini-1.5-pro")  # Upgraded to 'pro' for better accuracy
-
+        return ["Error: Gemini API key is missing."]
+    
+    model = genai.GenerativeModel("gemini-1.5-pro")
     prompt = f"""
     Analyze the following handwritten or printed text for the subject {subject} and generate a well-structured student report card.
-
     Extracted Text:
     {text}
-
     Report Card Format:
-    1️⃣ Subject: {subject}  
-    2️⃣ Assignment/Test Type: (Determine if it's an assignment or test component)  
-    3️⃣ Key Concept: (Summarize the main topic concisely)  
-    4️⃣ Accuracy: (Evaluate correctness with explanations)  
-    5️⃣ Strengths: (Mention positive aspects of the content)  
-    6️⃣ Areas for Improvement: (Highlight key issues/errors)  
-    7️⃣ Suggestions: (Provide concise recommendations)  
-    8️⃣ Overall Assessment: (Final remark on clarity and quality)  
-
-    Ensure the response is properly structured as a list.
+    1. Subject: {subject}
+    2. Assignment/Test Type:
+    3. Key Concept:
+    4. Accuracy:
+    5. Strengths:
+    6. Areas for Improvement:
+    7. Suggestions:
+    8. Overall Assessment:
     """
-
+    
     try:
         response = model.generate_content(prompt)
-
-        if response.text:
-            return response.text.strip().split("\n")  # Convert AI response to list format
-
-        return ["No response from Gemini AI."]
-
+        print(response.text)
+        return response.text.strip().split("\n") if response.text else ["No response from Gemini AI."]
     except Exception as e:
         return [f"Error generating report: {str(e)}"]
 
-@app.route("/", methods=["GET"])
-def home():
-    """Simple API route for testing"""
-    return jsonify({"message": "Flask backend is running!"})
+def generate_pdf(report_data):
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+
+    # ✅ Load a Unicode font (DejaVuSans.ttf) if available
+    font_path = os.path.join(os.getcwd(), "fonts", "DejaVuSans.ttf")
+    if os.path.exists(font_path):
+        pdf.add_font("DejaVu", "", font_path, uni=True)
+        pdf.set_font("DejaVu", "", 11)  # Use Unicode-supported font
+    else:
+        pdf.set_font("Arial", "", 11)  # Fallback
+
+    pdf.cell(200, 10, "Student Report", ln=True, align='C')
+    pdf.ln(10)
+
+    pdf.set_font("Arial", "", 12)
+    pdf.cell(200, 10, f"Filename: {report_data['filename']}", ln=True)
+    pdf.cell(200, 10, f"Subject: {report_data['subject']}", ln=True)
+    pdf.ln(5)
+
+    pdf.set_font("Arial", "", 11)
+
+    for line in report_data['report']:
+        try:
+            # ✅ Encode to Latin-1 safely (replace unsupported characters)
+            pdf.multi_cell(0, 10, line.encode("latin-1", "replace").decode("latin-1"))
+        except Exception as e:
+            print(f"[ERROR] Encoding issue in line: {line}, Error: {str(e)}")
+
+    # ✅ Save PDF to BytesIO buffer
+    pdf_output = BytesIO()
+    pdf.output(pdf_output, "S")  
+    pdf_output.seek(0)
+
+    return pdf_output
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
-    """Handles file upload and processing"""
     if "file" not in request.files or "subject" not in request.form:
         return jsonify({"error": "File and subject are required."}), 400
 
@@ -123,27 +144,70 @@ def upload_file():
 
     file_ext = filename.rsplit(".", 1)[1].lower()
     text = extract_text(file_path, file_ext)
-
     if not text:
+        print("[ERROR] Text extraction failed")  # Debugging
         return jsonify({"error": "Could not extract text from file"}), 400
 
     report_content = generate_report(subject, text)
 
-    # Store report data in memory (Replace with a database later)
-    report = {
+    report_data = {
         "filename": filename,
         "subject": subject,
-        "report": report_content
+        "report": report_content,
+        "timestamp": datetime.datetime.now(datetime.UTC)
     }
-    reports.append(report)
 
-    return jsonify({"filename": filename, "subject": subject, "report": report_content})
+    # Generate PDF and store in GridFS
+    try:
+        pdf_file = generate_pdf(report_data)
+        pdf_id = fs.put(pdf_file, filename=f"{filename}.pdf")
+        report_data["pdf_id"] = str(pdf_id)  # Ensure ObjectId is converted to string
+    except Exception as e:
+        print(f"[ERROR] Failed to generate/store PDF: {str(e)}")  # Debugging
+        return jsonify({"error": f"Failed to generate/store PDF: {str(e)}"}), 500
 
-@app.route("/reports", methods=["GET"])
-def get_reports():
-    """Fetch all stored reports in sequential order"""
-    return jsonify({"reports": reports})
+    # Insert report data into MongoDB
+    try:
+        print(f"[DEBUG] Connected to MongoDB: {db.name}")
+        result = reports_collection.insert_one(report_data)
+        print(f"[SUCCESS] Report inserted with ID: {result.inserted_id}")  # Debugging
+    except Exception as e:
+        print(f"[ERROR] MongoDB insert failed: {str(e)}")  # Debugging
+        return jsonify({"error": f"Database insert failed: {str(e)}"}), 500
+
+    return jsonify({
+        "message": "Report stored successfully",
+        "report_id": str(result.inserted_id),  # ✅ Add this line
+        "report": {
+            "filename": report_data["filename"],
+            "subject": report_data["subject"],
+            "report": report_data["report"],
+            "timestamp": report_data["timestamp"].isoformat(),
+            "pdf_id": report_data.get("pdf_id", None)
+        }
+    })
+
+@app.route("/reports/<report_id>", methods=["GET"])
+def get_report(report_id):
+    try:
+        report = reports_collection.find_one({"_id": ObjectId(report_id)})
+        if not report:
+            return jsonify({"error": "Report not found"}), 404
+
+        report["_id"] = str(report["_id"])  # Convert ObjectId to string
+        report["pdf_id"] = str(report.get("pdf_id", ""))  # Convert pdf_id to string (if exists)
+        return jsonify({"report": report})
+    
+    except Exception as e:
+        return jsonify({"error": f"Error fetching report: {str(e)}"}), 500
+
+@app.route("/download/<pdf_id>", methods=["GET"])
+def download_pdf(pdf_id):
+    try:
+        pdf_file = fs.get(ObjectId(pdf_id))
+        return send_file(BytesIO(pdf_file.read()), download_name="report.pdf", as_attachment=True, mimetype="application/pdf")
+    except Exception as e:
+        return jsonify({"error": f"Error downloading file: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
-

@@ -43,29 +43,37 @@ export default function Navbar() {
                 <button className="upload-button" onClick={() => navigate("/fileUpload")}>
                   Upload
                 </button>
-                {/* ✅ Report Button - Navigates to /showReport */}
-                <button className="upload-button" style={{ marginTop: "10px" }} onClick={() => navigate("/showReport")}>
+                {/* ✅ Report Button - Navigates to /Reports */}
+                <button className="upload-button" style={{ marginTop: "10px" }} onClick={() => navigate("/Reports")}>
                   Report
                 </button>
               </div>
             )}
           </div>
-          <button className="logout-button">Logout</button>
+          <div>
+            <button className="logout-button">Logout</button>
+          </div>
         </div>
       </nav>
 
       {/* ✅ Main Content */}
       <div className="content">
+        <h1>
+          <b classname="Head"><i>🚀 Welcome to Your AI-Powered Learning Assistant!</i></b>
+        </h1>
+        <br /><br />
         <h2 className="welcome-text">
-          🚀 **Welcome to Your AI-Powered Learning Assistant!**  
-          Say goodbye to hours of manual grading, lesson planning, and content creation.  
-          **Our intelligent platform transforms education,** making learning **smarter, faster, and more personalized.**  
-          <br /><br />
-          ✅ **Instant Report Generation** – Upload your handwritten or printed assignments and get detailed insights instantly!  
-          ✅ **AI-Powered Feedback** – Improve learning with accurate feedback, strengths, and improvement areas.  
-          ✅ **Smart Content Creation** – Generate quizzes, custom worksheets, and personalized study materials effortlessly.  
           <br />
-          🔥 **Empower your learning journey with AI. Let's make education smarter together!**  
+          Say goodbye to hours of manual grading, lesson planning, and content creation.  
+          Our intelligent platform transforms education, making analysis and report collection smarter, faster, and more personalized.  
+          <br /><br />
+          ✩ Instant Report Generation – Upload your handwritten or printed assignments and get detailed insights instantly!
+          <br />  
+          ✩ AI-Powered Feedback – Improve learning with accurate feedback, strengths, and improvement areas.  
+          <br />
+          ✩ Smart Content Creation – Generate quizzes, custom worksheets, and personalized study materials effortlessly.  
+          <br />
+          🔥 Empower your learning journey with AI. Let's make education smarter together!  
         </h2>
       </div>
     </>

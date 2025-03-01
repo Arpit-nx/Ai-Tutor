@@ -73,24 +73,28 @@ const FileUpload = () => {
             setMessage("❌ Please select a file and enter a subject.");
             return;
         }
-
+    
         const formData = new FormData();
         formData.append("file", file);
         formData.append("subject", subject);
-
+    
         try {
             const response = await axios.post("http://127.0.0.1:5000/upload", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-
-            setMessage("✅ File uploaded successfully!");
-            navigate("/report", { state: { report: response.data.report } });
-
+    
+            console.log("Upload Response:", response.data);  // ✅ Debug response
+            if (response.data.error) {
+                setMessage(`❌ Upload failed: ${response.data.error}`);
+            } else {
+                setMessage("✅ File uploaded successfully!");
+                navigate("/report", { state: { reportId: response.data.report_id } });
+            }
         } catch (error) {
-            setMessage("❌ Upload failed. Try again.");
-            console.error("Error uploading file:", error);
+            console.error("Upload Error:", error.response?.data || error);
+            setMessage("❌ Upload failed. Check console for details.");
         }
-    };
+    };    
 
     return (
         <div className="upload-container">

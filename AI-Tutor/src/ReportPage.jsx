@@ -1,45 +1,58 @@
-// import React from "react";
-// import { useLocation, useNavigate } from "react-router-dom";
-
-// const ReportPage = () => {
-//     const location = useLocation();
-//     const navigate = useNavigate();
-
-//     // ✅ Extract report data (if available)
-//     const report = location.state?.report || "No report available.";
-
-//     return (
-//         <div className="report-container">
-//             <h2>Generated Report</h2>
-//             <div className="report-box">
-//                 <p>{report}</p>
-//             </div>
-//             <button className="back-button" onClick={() => navigate("/")}>
-//                 Back to Upload
-//             </button>
-//         </div>
-//     );
-// };
-
-// export default ReportPage;
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./ReportPage.css";
 
 const ReportPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    
-    // ✅ Extract report data (structured as an array)
-    const report = location.state?.report || [];
+    const [report, setReport] = useState([]);  // ✅ Start with an empty array
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const reportId = location.state?.reportId;
+        console.log("🚀 Received reportId:", reportId);
+
+        if (!reportId) {
+            setError("No report ID provided.");
+            setLoading(false);
+            return;
+        }
+
+        fetch(`http://127.0.0.1:5000/reports/${reportId}`)
+            .then((res) => {
+                console.log("📡 Fetching report...");
+                return res.json();
+            })
+            .then((data) => {
+                console.log("✅ Fetched Report Data:", data);
+
+                if (data.report && Array.isArray(data.report.report)) { 
+                    // ✅ Filter out empty strings
+                    const filteredReport = data.report.report.filter(point => point.trim() !== "");
+                    setReport(filteredReport);
+                } else {
+                    setError("Report not found or has incorrect format.");
+                }
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("❌ Error fetching report:", err);
+                setError("Failed to fetch report.");
+                setLoading(false);
+            });
+    }, [location.state]);    
 
     return (
         <div className="report-container">
             <h2 className="title">Report</h2>
 
-            {/* Report Card */}
-            <div className="report-card">
-                {report.length > 0 ? (
+            {loading ? (
+                <p>Loading...</p>
+            ) : error ? (
+                <p className="error-message">{error}</p>
+            ) : report.length > 0 ? (  
+                <div className="report-card">
                     <ul className="report-list">
                         {report.map((point, index) => (
                             <li key={index} className="report-item">
@@ -47,12 +60,15 @@ const ReportPage = () => {
                             </li>
                         ))}
                     </ul>
-                ) : (
-                    <p className="report-text">No report available.</p>
-                )}
-            </div>
+                </div>
+            ) : (
+                <p>No report data available.</p>
+            )}
 
-            {/* Back Button */}
+            <button className="download-button" onClick={handleDownloadPDF}>
+                Download as PDF
+            </button>
+
             <button className="back-button" onClick={() => navigate("/FileUpload")}>
                 Back to Upload
             </button>
@@ -60,4 +76,4 @@ const ReportPage = () => {
     );
 };
 
-export default ReportPage;
+export default ReportPage;
