@@ -82,7 +82,7 @@ export default function Navbar() {
       {/* ✅ Main Content */}
       <div className="content">
         <h1>
-          <b className="Head"><i> Welcome to Student Portal !</i></b>
+          <b className="Head"><i> <b>Welcome to Cognito Portal !</b></i></b>
         </h1>
         <br /><br />
         <h2 className="welcome-text">

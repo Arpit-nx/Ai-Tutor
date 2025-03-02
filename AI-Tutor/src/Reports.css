@@ -1,7 +1,8 @@
 /*body*/
 body {
-    background-image: "./Report_back.jpg";
-}
+    /* background:linear-gradient(to right, #a69075, rgb(169, 57, 57)); */
+
+background-image: url('./new_edu.jpg');  }
 
 /* ✅ General Layout */
 .reports-container {
@@ -11,7 +12,7 @@ body {
     justify-content: flex-start;
     width: 100vw;
     height: 100vh;
-    background-color: #f8f9fa;
+    /* background-color: #f8f9fa; */
     padding: 20px;
     overflow-y: auto;
   }
@@ -26,6 +27,7 @@ body {
     border-radius: 25px;
     outline: none;
     margin-bottom: 20px;
+    box-shadow: white;
   }
   
   /* ✅ Reports List (Grid Layout) */
@@ -40,13 +42,14 @@ body {
   
   /* ✅ Report Card */
   .report-card {
-    background-color: white;
+    /* background-color: white; */
     border-radius: 12px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     padding: 15px;
     text-align: center;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
+    background : linear-gradient(to right, white, brown);
     overflow: hidden;
     min-height: 150px;
   }
