@@ -2,6 +2,7 @@ import os
 import pdfplumber
 import pytesseract
 import gridfs
+from auth import auth_bp
 from flask_cors import CORS
 import google.generativeai as genai
 from flask import Flask, request, jsonify, send_file
@@ -90,6 +91,10 @@ def generate_report(subject, text):
     except Exception as e:
         return [f"Error generating report: {str(e)}"]
 
+import os
+from fpdf import FPDF
+from io import BytesIO
+
 def generate_pdf(report_data):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -100,25 +105,27 @@ def generate_pdf(report_data):
     if os.path.exists(font_path):
         pdf.add_font("DejaVu", "", font_path, uni=True)
         pdf.set_font("DejaVu", "", 11)  # Use Unicode-supported font
+        print("[INFO] Using DejaVuSans font.")  
     else:
         pdf.set_font("Arial", "", 11)  # Fallback
+        print("[WARNING] DejaVuSans not found, using Arial.")
 
     pdf.cell(200, 10, "Student Report", ln=True, align='C')
     pdf.ln(10)
 
-    pdf.set_font("Arial", "", 12)
+    pdf.set_font("DejaVu" if os.path.exists(font_path) else "Arial", "", 12)
     pdf.cell(200, 10, f"Filename: {report_data['filename']}", ln=True)
     pdf.cell(200, 10, f"Subject: {report_data['subject']}", ln=True)
     pdf.ln(5)
 
-    pdf.set_font("Arial", "", 11)
+    pdf.set_font("DejaVu" if os.path.exists(font_path) else "Arial", "", 11)
 
     for line in report_data['report']:
         try:
-            # ✅ Encode to Latin-1 safely (replace unsupported characters)
-            pdf.multi_cell(0, 10, line.encode("latin-1", "replace").decode("latin-1"))
+            # ✅ No need to encode to Latin-1 if DejaVu is used
+            pdf.multi_cell(0, 10, line)
         except Exception as e:
-            print(f"[ERROR] Encoding issue in line: {line}, Error: {str(e)}")
+            print(f"[ERROR] Issue in line: {line}, Error: {str(e)}")
 
     # ✅ Save PDF to BytesIO buffer
     pdf_output = BytesIO()

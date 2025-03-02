@@ -8,6 +8,7 @@ const ReportPage = () => {
     const [report, setReport] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [pdfId, setPdfId] = useState(null);  // ✅ Store PDF ID for downloading
 
     useEffect(() => {
         const reportId = location.state?.reportId;
@@ -26,6 +27,7 @@ const ReportPage = () => {
 
                 if (data.report && Array.isArray(data.report.report)) { 
                     setReport(data.report.report.filter(point => point.trim() !== ""));
+                    setPdfId(data.report.pdf_id || null);  // ✅ Save the PDF ID
                 } else {
                     setError("Invalid report format.");
                 }
@@ -40,13 +42,12 @@ const ReportPage = () => {
 
     // ✅ Define Download PDF function
     const handleDownloadPDF = () => {
-        const reportId = location.state?.reportId;
-        if (!reportId) {
-            alert("No report ID found.");
+        if (!pdfId) {
+            alert("No PDF available for download.");
             return;
         }
 
-        window.open(`http://127.0.0.1:5000/download/${reportId}`, "_blank");
+        window.open(`http://127.0.0.1:5000/download/${pdfId}`, "_blank");
     };
 
     return (
@@ -71,8 +72,13 @@ const ReportPage = () => {
                 <p>No report data available.</p>
             )}
 
-            <button className="download-button" onClick={handleDownloadPDF}>
-                Download as PDF
+            {/* ✅ Download PDF button now functional */}
+            <button 
+                className="download-button" 
+                onClick={handleDownloadPDF}
+                disabled={!pdfId}  // 🔹 Disable if no PDF available
+            >
+                {pdfId ? "Download as PDF" : "PDF Not Available"}
             </button>
 
             <button className="back-button" onClick={() => navigate("/FileUpload")}>

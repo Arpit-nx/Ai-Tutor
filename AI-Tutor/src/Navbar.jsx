@@ -59,21 +59,28 @@ export default function Navbar() {
       {/* ✅ Main Content */}
       <div className="content">
         <h1>
-          <b classname="Head"><i>🚀 Welcome to Your AI-Powered Learning Assistant!</i></b>
+          <b classname="Head"><i> Welcome to Student Portal !</i></b>
         </h1>
         <br /><br />
         <h2 className="welcome-text">
           <br />
-          Say goodbye to hours of manual grading, lesson planning, and content creation.  
-          Our intelligent platform transforms education, making analysis and report collection smarter, faster, and more personalized.  
+          <b>Assignments</b>
+
           <br /><br />
-          ✩ Instant Report Generation – Upload your handwritten or printed assignments and get detailed insights instantly!
-          <br />  
-          ✩ AI-Powered Feedback – Improve learning with accurate feedback, strengths, and improvement areas.  
+
+
+         <h4 className="list">
+         
+          <li>Uploaded Assignments</li>
           <br />
-          ✩ Smart Content Creation – Generate quizzes, custom worksheets, and personalized study materials effortlessly.  
-          <br />
-          🔥 Empower your learning journey with AI. Let's make education smarter together!  
+          <li>Test Components</li>
+            
+         
+        
+         </h4>
+          
+         
+          
         </h2>
       </div>
     </>
