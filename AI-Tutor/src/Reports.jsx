@@ -12,26 +12,32 @@ const Reports = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true); // Start loading
-    fetch("http://127.0.0.1:5000/reports")
-      .then((res) => res.json())
+    setLoading(true);
+  
+    fetch("http://127.0.0.1:5000/reports") // Ensure the correct endpoint
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
-        console.log("Fetched Reports Data:", data.reports); // Debugging
+        console.log("Fetched Reports Data:", data);
         if (data.reports && Array.isArray(data.reports)) {
           setReports(data.reports);
         } else {
-          console.error("Invalid data format:", data);
+          console.error("Unexpected data format:", data);
           setError("Invalid data received from server");
         }
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching reports:", err);
-        setError("Failed to fetch reports");
+        console.error("Fetch error:", err);
+        setError(`Failed to fetch reports: ${err.message}`);
         setLoading(false);
       });
   }, []);
-
+  
   const filteredReports = reports.filter((report) =>
     report.filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
     report.subject.toLowerCase().includes(searchTerm.toLowerCase())

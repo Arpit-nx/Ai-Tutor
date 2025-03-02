@@ -34,6 +34,9 @@ if GEMINI_API_KEY:
 app = Flask(__name__)
 CORS(app)  # Consider restricting to specific origins
 
+# Register authentication routes
+app.register_blueprint(auth_bp, url_prefix="/auth")
+
 app.config["UPLOAD_FOLDER"] = "uploads"
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "docx"}
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
@@ -207,6 +210,20 @@ def get_report(report_id):
     
     except Exception as e:
         return jsonify({"error": f"Error fetching report: {str(e)}"}), 500
+    
+@app.route("/reports", methods=["GET"])
+def get_all_reports():
+    try:
+        reports = list(reports_collection.find({}, {"_id": 1, "filename": 1, "subject": 1}))
+
+        # Convert ObjectId to string
+        for report in reports:
+            report["_id"] = str(report["_id"])
+
+        return jsonify({"reports": reports}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error fetching reports: {str(e)}"}), 500
 
 @app.route("/download/<pdf_id>", methods=["GET"])
 def download_pdf(pdf_id):

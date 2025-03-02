@@ -1,7 +1,7 @@
 /* General Styling */
 body {
     /* background-color: #FAE4C8;   */
-    font-family: cursive;;
+    font-family:  Verdana, Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
     position: relative;
@@ -52,6 +52,9 @@ body::before {
     align-items: center;
     gap: 20px;
 }
+.assignments-dropdown{
+    position:relative;
+}
 
 /* Profile Dropdown */
 .profile-dropdown {
@@ -78,9 +81,13 @@ body::before {
     background: white;
     border: 1px solid #CC9C00;
     border-radius: 5px;
+    margin-top: 10px;
     padding: 10px;
     width: 180px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.upload-button{
+    margin-top:10px;
 }
 
 /* Upload & Report Buttons */
@@ -98,16 +105,22 @@ body::before {
     background: #f8e08e;
 }
 
-/* Logout Button */
+/* ✅ Fix Logout Button Position */
 .logout-button {
-    background: white;
-    color:rgb(132, 31, 31);
-    border: 2px solid #CC9C00;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 16px;
+    background-color: #8b5e3b;
+    color: white;
+    padding: 10px 15px;
+    border: none;
     border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
 }
+
+.logout-button:hover {
+    background-color: #6f4328;
+    transform: scale(1.05);
+}
+
 
 .logout-button:hover {
     background: #f8e08e;

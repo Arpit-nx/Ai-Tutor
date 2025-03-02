@@ -1,0 +1,93 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* background: linear-gradient(to bottom, #f5e1c8, #8b5e3b); */
+    background-color: transparent;
+}
+
+.auth-box {
+    background: rgba(255, 255, 255, 0.95); /* Slight transparency for better visibility */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    text-align: center;
+}
+
+/* Title Styling */
+.auth-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #4a3f35; /* Dark brown for heading */
+}
+
+/* Input Fields */
+.auth-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #a77e58;
+    border-radius: 5px;
+    background-color: #fdfaf6; /* Light cream background */
+    color: #4a3f35;
+    font-size: 16px;
+}
+
+/* Focus Effect */
+.auth-input:focus {
+    outline: none;
+    border-color: #8b5e3b;
+    box-shadow: 0 0 6px rgba(139, 94, 59, 0.6);
+}
+
+/* Buttons */
+.auth-button {
+    width: 100%;
+    background-color: #8b5e3b;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+/* Button Hover Effect */
+.auth-button:hover {
+    background-color: #6f4328;
+    transform: scale(1.03);
+}
+
+/* Toggle between Login and Signup */
+.auth-toggle {
+    background: none;
+    border: none;
+    color: #8b5e3b;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 15px;
+    transition: color 0.2s ease-in-out;
+}
+
+.auth-toggle:hover {
+    color: #6f4328;
+}
+
+/* Paragraph Styling */
+.auth-box p {
+    margin-top: 12px;
+    font-size: 15px;
+    color: #4a3f35;
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+    .auth-box {
+        width: 90%;
+        padding: 15px;
+    }
+}
