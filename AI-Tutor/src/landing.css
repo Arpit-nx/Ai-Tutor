@@ -1,0 +1,57 @@
+
+    
+body{
+   
+
+    font-family: "Playwrite IT Moderna", cursive;
+    font-optical-sizing: auto;
+    
+    font-style: normal;
+  
+  }
+
+
+
+.landing-container {
+   
+    height: 100vh;
+    background: url("new_edu.jpg") no-repeat center center/cover;
+    opacity:1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+}
+
+.overlay {
+    background: transparent;
+    padding: 2rem;
+    border-radius: 10px;
+    color: rgb(157, 91, 91);
+}
+
+.landing-title {
+    font-size: 3rem;
+    padding-bottom: 29px;
+    margin-bottom: 1rem;
+}
+.landing-description{
+    font-size: 30px;
+    padding-bottom: 30px;
+    color:brown;
+}
+.get-started {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.2rem;
+    background: #8b5e3b;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.get-started:hover {
+    background: #3f2512;
+}
