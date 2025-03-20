@@ -40,7 +40,7 @@ export default function Navbar() {
     <>
       {/* ✅ Navbar */}
       <nav className="navbar">
-        <h1 className="navbar-title">Student Portal</h1>
+        <h1 className="navbar-title"></h1>
         <div className="navbar-options">
           {/* ✅ Assignments Dropdown */}
           <div className="assignments-dropdown">

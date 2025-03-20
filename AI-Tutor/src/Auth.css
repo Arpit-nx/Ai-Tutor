@@ -28,7 +28,7 @@
     width: 100%;
     padding: 12px;
     margin-bottom: 12px;
-    border: 1px solid #a77e58;
+    border: 1px solidrgb(167, 111, 58);
     border-radius: 5px;
     background-color: #fdfaf6; /* Light cream background */
     color: #4a3f35;
